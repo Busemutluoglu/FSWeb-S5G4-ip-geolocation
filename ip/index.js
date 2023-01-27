@@ -1,31 +1,30 @@
+import axios from "axios";
 //axios import buraya gelecek
 
 var benimIP;
-
 
 // ------------ değiştirmeyin --------------
 // licensed to Ergineer 2022
 require("babel-core/register");
 require("babel-polyfill");
-async function ipAdresimiAl(){
-	await axios({
-		method: 'get',
-		url: 'https://apis.ergineer.com/ipadresim',
-	})
-	.then(function (response) {
-		return response.data
-	})
-	.then(function (a) {
-		benimIP=a
-	});
-}				
+async function ipAdresimiAl() {
+  await axios({
+    method: "get",
+    url: "https://apis.ergineer.com/ipadresim",
+  })
+    .then(function (response) {
+      return response.data;
+    })
+    .then(function (a) {
+      benimIP = a;
+    });
+}
 // ------------ değiştirmeyin --------------
-
 
 /*
 	ADIM 1: axios kullanarak, aşağıdaki URL'ye GET sorgusu atacağız
     (tag içindeki yere kendi ipnizi yazarak URL'yi oluşturun):
-    https://apis.ergineer.com/ipgeoapi/<ipniz>
+    https://apis.ergineer.com/ipgeoapi/95.70.234.156
 	
 	NOT: Bilgisayarın IP adresini öğrenmek için: https://apis.ergineer.com/ipadresim 
 	ADIM 5'e gelene kadar fonksiyonunuzu test etmek için ip nizi URL'ye manuel olarak ekleyebilirsiniz.
@@ -67,6 +66,103 @@ async function ipAdresimiAl(){
 	Örnek dinamik URL kullanımı: var url = "https://apis.ergineer.com/ipgeoapi/"+benimIP; 
 */
 
-
-
 //kodlar buraya gelecek
+
+// {/* <div class="card">
+// <img src={ülke bayrağı url} />
+// <div class="card-info">
+// 	<h3 class="ip">{ip adresi}</h3>
+// 	<p class="ulke">{ülke bilgisi (ülke kodu)}</p>
+// 	<p>Enlem: {enlem} Boylam: {boylam}</p>
+// 	<p>Şehir: {şehir}</p>
+// 	<p>Saat dilimi: {saat dilimi}</p>
+// 	<p>Para birimi: {para birimi}</p>
+// 	<p>ISP: {isp}</p>
+// </div>
+// </div> */}
+
+const data = {
+  sorgu: "95.70.234.156",
+  durum: "OK",
+  kıta: "Asia",
+  ülke: "Turkey",
+  ülkeKodu: "TR",
+  ülkebayrağı: "https://apis.ergineer.com/ulkebayraklari/TR",
+  bölge: "34",
+  bölgeAdı: "Istanbul",
+  şehir: "Istanbul",
+  zip: "34375",
+  enlem: 41.047899999999998499333742074668407440185546875,
+  boylam: 28.9772999999999996134647517465054988861083984375,
+  saatdilimi: "Europe/Istanbul",
+  parabirimi: "TRY",
+  isp: "TurkNet Iletisim Hizmetleri A.S.",
+  organizasyon: "Gayrettepe POP Dynamic",
+  as: "AS12735 TurkNet Iletisim Hizmetleri A.S.",
+};
+//https:\/\/apis.ergineer.com\/ulkebayraklari\/TR
+
+const container = document.querySelector(".cards");
+
+function BenimIP(f) {
+  const myDiv = document.createElement("div");
+  myDiv.classList.add("card");
+
+  const myImg = document.createElement("img");
+  myDiv.appendChild(myImg);
+  myImg.src = f.ülkebayrağı;
+
+  const mySecDiv = document.createElement("div");
+  mySecDiv.classList.add("card-info");
+  myDiv.appendChild(mySecDiv);
+
+  const h3 = document.createElement("h3");
+  h3.classList.add("ip");
+  h3.textContent = f.sorgu;
+  mySecDiv.appendChild(h3);
+
+  const ulke = document.createElement("p");
+  ulke.classList.add("ulke");
+  mySecDiv.appendChild(ulke);
+  ulke.textContent = `${f.ülke} (${f.ülkeKodu})`;
+
+  const enBoy = document.createElement("p");
+  mySecDiv.appendChild(enBoy);
+  enBoy.textContent = `Enlem: ${f.enlem} Boylam: ${f.boylam}`;
+
+  const city = document.createElement("p");
+  mySecDiv.appendChild(city);
+  city.textContent = `Şehir:  ${f.şehir}`;
+
+  const time = document.createElement("p");
+  mySecDiv.appendChild(time);
+  time.textContent = `Saat dilimi:  ${f.saatdilimi}`;
+
+  const money = document.createElement("p");
+  mySecDiv.appendChild(money);
+  money.textContent = `Para birimi:  ${f.parabirimi}`;
+
+  const isp = document.createElement("p");
+  mySecDiv.appendChild(isp);
+  isp.textContent = `ISP:  ${f.isp}`;
+
+  return myDiv;
+}
+
+container.appendChild(BenimIP(data));
+
+const connection = async function () {
+  await ipAdresimiAl();
+  await axios({
+    method: "get",
+    url: "https://apis.ergineer.com/ipgeoapi/" + benimIP,
+  })
+    .then(function (response) {
+      console.log(response);
+      return response.data;
+    })
+    .then(function (a) {
+      container.appendChild(BenimIP(a));
+    });
+};
+connection();
